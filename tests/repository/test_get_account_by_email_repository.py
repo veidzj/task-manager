@@ -10,13 +10,17 @@ def mock_db():
     with mongomock.MongoClient() as client:
         yield client['test_db']
 
-def test_get_by_email_success(mock_db):
+@pytest.fixture
+def account_data():
+    return {
+        'email': faker.email(),
+        'password': faker.password(),
+    }
+
+def test_get_by_email_success(mock_db, account_data):
     repository = GetAccountByEmailRepository('mongodb://localhost:27017', 'test_db')
     repository.db = mock_db
 
-    email = faker.email()
-    password = faker.password()
-    account_data = {'email': email, 'password': password}
     mock_db.accounts.insert_one(account_data)
 
     found_account = repository.get_by_email(account_data['email'])

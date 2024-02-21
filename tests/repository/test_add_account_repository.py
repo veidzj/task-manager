@@ -10,16 +10,20 @@ def mock_db():
     client = mongomock.MongoClient()
     yield client['test_db']
 
-def test_add_account_success(mock_db):
+@pytest.fixture
+def account_data():
+    return {
+        'email': faker.email(),
+        'password': faker.password(),
+    }
+
+def test_add_account_success(mock_db, account_data):
     repository = AddAccountRepository('mongodb://localhost:27017', 'test_db')
     repository.db = mock_db
 
-    email = faker.email()
-    password = faker.password()
-    account_data = {'email': email, 'password': password}
     repository.add(account_data)
 
-    saved_account = mock_db.accounts.find_one({'email': email})
+    saved_account = mock_db.accounts.find_one({'email': account_data['email']})
     assert saved_account is not None
-    assert saved_account['email'] == email
-    assert saved_account['password'] == password
+    assert saved_account['email'] == account_data['email']
+    assert saved_account['password'] == account_data['password']
