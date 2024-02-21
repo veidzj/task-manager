@@ -16,6 +16,10 @@ def test_account_creation():
     assert isinstance(account.id, UUID)
     assert isinstance(account.createdAt, datetime)
 
+def test_invalid_email():
+    with pytest.raises(ValueError):
+        Account(faker.name(), faker.password())
+
 def test_invalid_password():
     with pytest.raises(ValueError):
         Account(faker.email(), faker.pystr(1, 5))
