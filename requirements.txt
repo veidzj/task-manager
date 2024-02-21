@@ -2,4 +2,5 @@ Flask==3.0.2
 pytest==8.0.1
 Faker==23.2.1
 pymongo==4.6.2
+mongomock==4.1.2
 PyJWT==2.8.0
