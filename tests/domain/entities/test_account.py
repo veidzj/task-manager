@@ -1,3 +1,4 @@
+import pytest
 from datetime import datetime
 from uuid import UUID
 from faker import Faker
@@ -14,3 +15,9 @@ def test_account_creation():
     assert account.password == password
     assert isinstance(account.id, UUID)
     assert isinstance(account.createdAt, datetime)
+
+def test_invalid_password():
+    with pytest.raises(ValueError):
+        Account(faker.email(), faker.pystr(1, 5))
+    with pytest.raises(ValueError):
+        Account(faker.email(), faker.pystr(256, 257))
