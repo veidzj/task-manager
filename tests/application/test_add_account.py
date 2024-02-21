@@ -1,7 +1,6 @@
 import pytest
 from faker import Faker
 from unittest.mock import Mock
-from werkzeug.security import generate_password_hash
 from src.application.add_account import AddAccount
 from src.domain.errors.account_already_exists_error import AccountAlreadyExistsError
 
