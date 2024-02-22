@@ -70,3 +70,9 @@ def test_sign_in_invalid_credentials_error(client):
         mock_authentication.side_effect = InvalidCredentialsError()
         response = client.post('/v1/sign-in', json={'email': email, 'password': password})
         assert response.status_code == 401
+
+def test_sign_in_account_not_found_error(client):
+    with patch('src.application.authentication.Authentication.auth') as mock_authentication:
+        mock_authentication.side_effect = AccountNotFoundError()
+        response = client.post('/v1/sign-in', json={'email': email, 'password': password})
+        assert response.status_code == 404
