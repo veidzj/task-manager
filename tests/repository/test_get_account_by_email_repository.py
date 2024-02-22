@@ -17,13 +17,18 @@ def account_data():
         'password': faker.password(),
     }
 
-def test_get_by_email_success(mock_db, account_data):
-    repository = GetAccountByEmailRepository('mongodb://localhost:27017', 'test_db')
-    repository.db = mock_db
+@pytest.fixture
+def setup_sut(mock_db, account_data):
+    sut = GetAccountByEmailRepository('mongodb://localhost:27017', 'test_db')
+    sut.db = mock_db
+    return sut, mock_db, account_data
+
+def test_get_by_email_success(setup_sut):
+    sut, mock_db, account_data = setup_sut
 
     mock_db.accounts.insert_one(account_data)
 
-    found_account = repository.get_by_email(account_data['email'])
+    found_account = sut.get_by_email(account_data['email'])
     assert found_account is not None
     assert found_account['email'] == account_data['email']
     assert found_account['password'] == account_data['password']

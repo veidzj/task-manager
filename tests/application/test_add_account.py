@@ -8,27 +8,29 @@ faker = Faker()
 email = faker.email()
 password = faker.password()
 
-def test_add_new_account_success():
+@pytest.fixture
+def setup_sut():
     mock_get_account_by_email_repository = Mock()
     mock_add_account_repository = Mock()
-    mock_get_account_by_email_repository.get_by_email.return_value = None
-    add_account = AddAccount(mock_get_account_by_email_repository, mock_add_account_repository)
+    sut = AddAccount(mock_get_account_by_email_repository, mock_add_account_repository)
+    return sut, mock_get_account_by_email_repository, mock_add_account_repository
 
-    add_account.add(email, password)
+def test_add_new_account_success(setup_sut):
+    sut, mock_get_account_by_email_repository, mock_add_account_repository = setup_sut
+    mock_get_account_by_email_repository.get_by_email.return_value = None
+
+    sut.add(email, password)
 
     mock_add_account_repository.add.assert_called_once()
     hashed_password = mock_add_account_repository.add.call_args[0][0]['password']
     assert hashed_password != password
 
-def test_add_account_fails_when_account_exists():
-    mock_get_account_by_email_repository = Mock()
-    mock_add_account_repository = Mock()
+def test_add_account_fails_when_account_exists(setup_sut):
+    sut, mock_get_account_by_email_repository, mock_add_account_repository = setup_sut
 
     mock_get_account_by_email_repository.get_by_email.return_value = {'email': email, 'password': password}
 
-    add_account = AddAccount(mock_get_account_by_email_repository, mock_add_account_repository)
-
     with pytest.raises(AccountAlreadyExistsError):
-        add_account.add(email, password)
+        sut.add(email, password)
 
     mock_add_account_repository.add.assert_not_called()
