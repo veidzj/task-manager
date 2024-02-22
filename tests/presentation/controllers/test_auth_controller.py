@@ -33,13 +33,17 @@ def test_sign_up_validation_error(client):
         assert response.status_code == 400
 
 def test_sign_up_account_already_exists_error(client):
-    with patch('src.application.authentication.Authentication.auth') as mock_authentication:
+    with patch('src.application.add_account.AddAccount.add') as mock_add_account, \
+         patch('src.application.authentication.Authentication.auth') as mock_authentication:
+        mock_add_account.return_value = None
         mock_authentication.side_effect = AccountAlreadyExistsError()
         response = client.post('/v1/sign-up', json={'email': email, 'password': password})
         assert response.status_code == 401
 
 def test_sign_up_invalid_credentials_error(client):
-    with patch('src.application.authentication.Authentication.auth') as mock_authentication:
+    with patch('src.application.add_account.AddAccount.add') as mock_add_account, \
+         patch('src.application.authentication.Authentication.auth') as mock_authentication:
+        mock_add_account.return_value = None
         mock_authentication.side_effect = InvalidCredentialsError()
         response = client.post('/v1/sign-up', json={'email': email, 'password': password})
         assert response.status_code == 401
