@@ -1,7 +1,7 @@
 import pytest
 import mongomock
 from faker import Faker
-from src.repository.add_account_repository import AddAccountRepository
+from src.infra.repository.add_account_repository import AddAccountRepository
 
 faker = Faker()
 

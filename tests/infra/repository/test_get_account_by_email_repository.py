@@ -1,7 +1,7 @@
 import pytest
 import mongomock
 from faker import Faker
-from src.repository.get_account_by_email_repository import GetAccountByEmailRepository
+from src.infra.repository.get_account_by_email_repository import GetAccountByEmailRepository
 
 faker = Faker()
 

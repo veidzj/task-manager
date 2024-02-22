@@ -1,9 +1,9 @@
 from flask import Blueprint, request, jsonify
 from werkzeug.security import generate_password_hash
 from src.application.add_account import AddAccount
-from src.repository.add_account_repository import AddAccountRepository
+from src.infra.repository.add_account_repository import AddAccountRepository
 from src.application.authentication import Authentication
-from src.repository.get_account_by_email_repository import GetAccountByEmailRepository
+from src.infra.repository.get_account_by_email_repository import GetAccountByEmailRepository
 from src.domain.errors.account_already_exists_error import AccountAlreadyExistsError
 from src.domain.errors.validation_error import ValidationError
 
