@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from src.domain.errors.account_already_exists_error import AccountAlreadyExistsError
 from src.domain.errors.invalid_credentials_error import InvalidCredentialsError
+from src.domain.errors.account_not_found_error import AccountNotFoundError
 from src.domain.errors.validation_error import ValidationError
 from src.application.add_account import AddAccount
 from src.application.authentication import Authentication
@@ -58,6 +59,14 @@ def sign_up():
                 'message': str(e)
             }
         }), 401
+    except AccountNotFoundError as e:
+        return jsonify({
+            'error': {
+                'status': 404,
+                'type': 'Authentication',
+                'message': str(e)
+            }
+        }), 404
     except Exception as e:
         return jsonify({
             'error': {
