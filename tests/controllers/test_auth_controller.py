@@ -3,6 +3,7 @@ from faker import Faker
 from src.api.app import app
 from unittest.mock import patch
 from src.domain.errors.validation_error import ValidationError
+from src.domain.errors.account_already_exists_error import AccountAlreadyExistsError
 
 faker = Faker()
 email = faker.email()
@@ -29,6 +30,13 @@ def test_sign_up_validation_error(client):
         mock_add_account.side_effect = ValidationError(faker.words())
         response = client.post('/v1/sign-up', json={'email': email, 'password': password})
         assert response.status_code == 400
+
+def test_sign_up_account_already_exists_error(client):
+    with patch('src.application.add_account.AddAccount.add') as mock_add_account, \
+         patch('src.application.authentication.Authentication.handle') as mock_authentication:
+        mock_add_account.side_effect = AccountAlreadyExistsError()
+        response = client.post('/v1/sign-up', json={'email': email, 'password': password})
+        assert response.status_code == 401
 
 def test_sign_up_unexpected_error(client):
     with patch('src.application.add_account.AddAccount.add') as mock_add_account, \
