@@ -99,6 +99,14 @@ def sign_in():
                 'message': str(e)
             }
         }), 401
+    except AccountNotFoundError as e:
+        return jsonify({
+            'error': {
+                'status': 404,
+                'type': 'Authentication',
+                'message': str(e)
+            }
+        }), 404
     except Exception as e:
         print(str(e))
         return jsonify({
