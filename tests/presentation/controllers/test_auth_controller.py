@@ -17,7 +17,7 @@ def client():
 
 def test_sign_up_success(client):
     with patch('src.application.add_account.AddAccount.add') as mock_add_account, \
-         patch('src.application.authentication.Authentication.handle') as mock_authentication:
+         patch('src.application.authentication.Authentication.auth') as mock_authentication:
         mock_add_account.return_value = None
         mock_authentication.return_value = faker.words()
         response = client.post('/v1/sign-up', json={'email': email, 'password': password})
