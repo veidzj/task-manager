@@ -74,7 +74,15 @@ def sign_in():
                 'type': 'Authentication',
                 'accessToken': token
             }
-        }), 201
+        }), 200
+    except InvalidCredentialsError as e:
+        return jsonify({
+            'error': {
+                'status': 401,
+                'type': 'Authentication',
+                'message': str(e)
+            }
+        }), 401
     except Exception as e:
         print(str(e))
         return jsonify({
