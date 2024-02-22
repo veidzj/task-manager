@@ -1,6 +1,6 @@
 from flask import Flask
-from src.controllers.health_check import health_check_blueprint
-from src.controllers.auth_controller import auth_blueprint
+from src.presentation.controllers.health_check import health_check_blueprint
+from src.presentation.controllers.auth_controller import auth_blueprint
 
 app = Flask(__name__)
 
