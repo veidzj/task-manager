@@ -42,7 +42,15 @@ def sign_up():
                 'message': str(e)
             }
         }), 400
-    except AccountAlreadyExistsError or InvalidCredentialsError as e:
+    except AccountAlreadyExistsError as e:
+        return jsonify({
+            'error': {
+                'status': 401,
+                'type': 'Authentication',
+                'message': str(e)
+            }
+        }), 401
+    except InvalidCredentialsError as e:
         return jsonify({
             'error': {
                 'status': 401,
@@ -51,7 +59,6 @@ def sign_up():
             }
         }), 401
     except Exception as e:
-        print(str(e))
         return jsonify({
             'error': {
                 'status': 500,
