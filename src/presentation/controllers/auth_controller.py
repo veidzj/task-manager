@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from src.domain.errors.account_already_exists_error import AccountAlreadyExistsError
+from src.domain.errors.invalid_credentials_error import InvalidCredentialsError
 from src.domain.errors.validation_error import ValidationError
 from src.application.add_account import AddAccount
 from src.application.authentication import Authentication
@@ -25,7 +26,7 @@ def sign_up():
 
     try:
         add_account_use_case.add(email, password)
-        token = authentication_use_case.handle(email)
+        token = authentication_use_case.auth(email, password)
         return jsonify({
             'data': {
                 'status': 201,
@@ -41,7 +42,7 @@ def sign_up():
                 'message': str(e)
             }
         }), 400
-    except AccountAlreadyExistsError as e:
+    except AccountAlreadyExistsError or InvalidCredentialsError as e:
         return jsonify({
             'error': {
                 'status': 401,
@@ -49,6 +50,31 @@ def sign_up():
                 'message': str(e)
             }
         }), 401
+    except Exception as e:
+        print(str(e))
+        return jsonify({
+            'error': {
+                'status': 500,
+                'type': 'Server',
+                'message': 'Internal server error'
+            }
+        }), 500
+
+@auth_blueprint.route('/v1/sign-in', methods=['POST'])
+def sign_in():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+
+    try:
+        token = authentication_use_case.auth(email, password)
+        return jsonify({
+            'data': {
+                'status': 200,
+                'type': 'Authentication',
+                'accessToken': token
+            }
+        }), 201
     except Exception as e:
         print(str(e))
         return jsonify({
