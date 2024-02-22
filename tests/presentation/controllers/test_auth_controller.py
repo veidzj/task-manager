@@ -41,3 +41,10 @@ def test_sign_up_unexpected_error(client):
         mock_add_account.side_effect = TypeError()
         response = client.post('/v1/sign-up', json={'email': email, 'password': password})
         assert response.status_code == 500
+
+def test_sign_in_success(client):
+    with patch('src.application.authentication.Authentication.auth') as mock_authentication:        
+        mock_authentication.return_value = faker.words()
+        response = client.post('/v1/sign-in', json={'email': email, 'password': password})
+        assert response.status_code == 200
+        assert 'accessToken' in response.json['data']
