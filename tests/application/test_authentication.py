@@ -13,16 +13,16 @@ password = faker.password()
 
 @pytest.fixture
 def setup_sut():
-    user_repository_mock = Mock()
+    get_account_by_email_repository = Mock()
     secret_key = 'jwt_secret_key'
-    sut = Authentication(user_repository_mock, secret_key)
-    return sut, user_repository_mock, secret_key
+    sut = Authentication(get_account_by_email_repository, secret_key)
+    return sut, get_account_by_email_repository, secret_key
 
 def test_authentication_success(setup_sut):
-    sut, user_repository_mock, secret_key = setup_sut
+    sut, get_account_by_email_repository, secret_key = setup_sut
 
     hashed_password = generate_password_hash(password)
-    user_repository_mock.get_by_email.return_value = {'email': email, 'password': hashed_password}
+    get_account_by_email_repository.get_by_email.return_value = {'email': email, 'password': hashed_password}
 
     token = sut.auth(email, password)
 
@@ -32,17 +32,17 @@ def test_authentication_success(setup_sut):
     assert 'exp' in decoded_payload
 
 def test_authentication_user_not_found(setup_sut):
-    sut, user_repository_mock, _ = setup_sut
+    sut, get_account_by_email_repository, _ = setup_sut
 
-    user_repository_mock.get_by_email.return_value = None
+    get_account_by_email_repository.get_by_email.return_value = None
 
     with pytest.raises(AccountNotFoundError):
         sut.auth(email, password)
 
 def test_authentication_invalid_credentials(setup_sut):
-    sut, user_repository_mock, _ = setup_sut
+    sut, get_account_by_email_repository, _ = setup_sut
 
-    user_repository_mock.get_by_email.return_value = {'email': email, 'password': password}
+    get_account_by_email_repository.get_by_email.return_value = {'email': email, 'password': password}
 
     with pytest.raises(InvalidCredentialsError):
         sut.auth(email, faker.password())
