@@ -29,3 +29,10 @@ def test_sign_up_validation_error(client):
         mock_add_account.side_effect = ValidationError(faker.words())
         response = client.post('/v1/sign-up', json={'email': email, 'password': password})
         assert response.status_code == 400
+
+def test_sign_up_unexpected_error(client):
+    with patch('src.application.add_account.AddAccount.add') as mock_add_account, \
+         patch('src.application.authentication.Authentication.handle') as mock_authentication:
+        mock_add_account.side_effect = TypeError()
+        response = client.post('/v1/sign-up', json={'email': email, 'password': password})
+        assert response.status_code == 500
